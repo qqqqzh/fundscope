@@ -4,23 +4,31 @@
 
 ## 环境要求
 
-- Node.js 20+，包含 `npm`
-- Python 3.11+
-- Git
+- **Node.js 20+**（包含 `npm`）
+- **Python 3.11+**
+- **Git**
 
-确认环境：
+### 确认环境
+
+**Windows：**
+
+```powershell
+node -v      # 应显示 v20.x.x 或更高
+npm -v       # 应显示 10.x.x 或更高
+python --version  # 应显示 Python 3.11.x 或更高
+git --version
+```
+
+**macOS / Linux：**
 
 ```bash
 node -v
 npm -v
-python --version
+python3 --version  # 注意是 python3
+git --version
 ```
 
-macOS / Linux 通常使用：
-
-```bash
-python3 --version
-```
+> 💡 如果 Python 未安装，请从 [python.org](https://www.python.org/downloads/) 下载安装，安装时勾选 "Add Python to PATH"。
 
 ## 拉取项目
 
@@ -31,14 +39,16 @@ cd fundscope
 
 本地默认配置已经够用。需要连接远程后端时，再复制环境变量样例：
 
-```bash
-cp .env.example .env.local
-```
-
-Windows PowerShell：
+**Windows：**
 
 ```powershell
 Copy-Item .env.example .env.local
+```
+
+**macOS / Linux：**
+
+```bash
+cp .env.example .env.local
 ```
 
 ## 一键启动
@@ -84,30 +94,63 @@ bash scripts/start-dev.sh --skip-install
 
 如果脚本不适合你的环境，可以分两个终端启动。
 
-终端 1：后端
+### 终端 1：后端
 
-```bash
-python -m venv backend/.venv
-backend/.venv/Scripts/python -m pip install -r backend/requirements.txt
-backend/.venv/Scripts/python backend/main.py
+**Windows（PowerShell）：**
+
+```powershell
+# 创建虚拟环境
+python -m venv backend\.venv
+
+# 激活虚拟环境（可选，直接用完整路径也行）
+backend\.venv\Scripts\activate
+
+# 安装依赖
+backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+
+# 启动后端
+backend\.venv\Scripts\python.exe backend\main.py
 ```
 
-macOS / Linux：
+**macOS / Linux：**
 
 ```bash
+# 创建虚拟环境
 python3 -m venv backend/.venv
+
+# 安装依赖
 backend/.venv/bin/python -m pip install -r backend/requirements.txt
+
+# 启动后端
 backend/.venv/bin/python backend/main.py
 ```
 
-终端 2：前端
+> 💡 首次安装依赖可能需要几分钟，`akshare`、`pandas` 包较大。如果下载慢，可以使用国内镜像（见下方常见问题）。
+
+后端启动成功后会显示：
+```
+INFO:     Uvicorn running on http://0.0.0.0:8000
+```
+
+### 终端 2：前端
 
 ```bash
+# 安装依赖（有 package-lock.json 时推荐用 npm ci）
 npm ci
+
+# 启动开发服务器
 npm run dev
 ```
 
-访问 <http://localhost:3000>。
+> 💡 `npm ci` 和 `npm install` 都可以，`npm ci` 更快且保证版本一致。
+
+前端启动成功后会显示：
+```
+▲ Next.js 16.x.x
+- Local: http://localhost:3000
+```
+
+访问 <http://localhost:3000> 即可打开应用。
 
 ## 环境变量
 
@@ -174,28 +217,88 @@ FRONTEND_ORIGINS=https://your-fundscope.vercel.app
 - 前端：`3000`
 - 后端：`8000`
 
-先关闭占用这些端口的旧进程，再重新运行启动脚本。
+**Windows 查看占用端口的进程：**
+
+```powershell
+netstat -ano | findstr :3000
+netstat -ano | findstr :8000
+```
+
+然后根据 PID 关闭进程：
+
+```powershell
+taskkill /PID <进程ID> /F
+```
+
+**macOS / Linux：**
+
+```bash
+lsof -i :3000
+lsof -i :8000
+kill -9 <进程ID>
+```
 
 ### Python 依赖安装慢或失败
 
 `akshare`、`pandas` 会拉取较多依赖。可以换网络环境或使用国内镜像：
 
-```bash
-backend/.venv/Scripts/python -m pip install -r backend/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+**Windows：**
+
+```powershell
+backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-macOS / Linux：
+**macOS / Linux：**
 
 ```bash
 backend/.venv/bin/python -m pip install -r backend/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### 页面能打开但没有数据
+### 虚拟环境创建失败
 
-先确认后端是否可访问：
+如果提示 "No module named venv"：
 
 ```bash
-curl http://localhost:8000/api/index
+# Ubuntu/Debian
+sudo apt install python3-venv
+
+# CentOS/RHEL
+sudo yum install python3-venv
 ```
+
+### npm install 失败
+
+1. 确认 Node.js 版本 ≥ 20：`node -v`
+2. 清除缓存重试：
+   ```bash
+   npm cache clean --force
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+### 页面能打开但没有数据
+
+1. 先确认后端是否可访问：
+
+   **Windows（PowerShell）：**
+   ```powershell
+   curl http://localhost:8000/api/index
+   ```
+
+   **macOS / Linux：**
+   ```bash
+   curl http://localhost:8000/api/index
+   ```
+
+2. 如果返回 JSON 数据，说明后端正常，检查前端配置
+3. 如果返回错误，查看后端日志：
+   ```bash
+   # 查看后端错误日志（如果用一键脚本启动）
+   cat .run/backend.err.log
+   ```
+
+### 首次加载较慢
+
+首次启动时，后端需要从数据源拉取基金列表，可能需要 1-2 分钟。后续请求会使用缓存，速度会快很多。
 
 如果前端部署在线上，确认 `BACKEND_BASE_URL` 指向公网可访问的后端地址，并确认后端 `FRONTEND_ORIGINS` 包含前端域名。

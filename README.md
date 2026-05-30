@@ -114,31 +114,38 @@ fundscope/
 
 ## 🚀 本地启动
 
-### 1. 启动前端
+### 1. 启动后端
+
+**Windows（PowerShell）：**
+
+```powershell
+python -m venv backend\.venv
+backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+backend\.venv\Scripts\python.exe backend\main.py
+```
+
+**macOS / Linux：**
 
 ```bash
-npm install
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements.txt
+backend/.venv/bin/python backend/main.py
+```
+
+默认地址：`http://localhost:8000`
+
+### 2. 启动前端
+
+另开一个终端：
+
+```bash
+npm ci
 npm run dev
 ```
 
-默认地址：
+默认地址：[http://localhost:3000](http://localhost:3000)
 
-- 前端：[http://localhost:3000](http://localhost:3000)
-
-### 2. 启动后端
-
-建议使用 Python 3.11+：
-
-```bash
-python -m venv backend/.venv
-backend/.venv/Scripts/activate
-pip install -r backend/requirements.txt
-python backend/main.py
-```
-
-默认地址：
-
-- 后端：`http://localhost:8000`
+> 💡 详细教程见 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
 ## 🔄 数据怎么流动
 
