@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Star, ArrowUpRight, ArrowDownRight, Trash2, TrendingUp } from 'lucide-react';
 import { getWatchlistMeta, saveWatchlistMeta, useWatchlist, type WatchlistFundMeta } from '@/lib/useWatchlist';
 import { getLocalWatchlistSnapshot } from '@/lib/localFundData';
+import AddToSimulationButton from '@/components/investment/AddToSimulationButton';
 
 interface FundInfo {
   code: string; name: string; type: string; sectors: string[];
@@ -175,6 +176,15 @@ export default function WatchlistPage() {
                 </span>
               </Link>
               <span className="col-span-2 text-right flex items-center justify-end gap-2">
+                <AddToSimulationButton
+                  fund={{
+                    code: fund.code,
+                    name: fund.name,
+                    type: fund.type,
+                    nav: fund.nav,
+                    dailyChange: fund.dailyChange,
+                  }}
+                />
                 <Link href={`/watchlist/${fund.code}`}
                   className="text-[11px] px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
                   <TrendingUp size={12} className="inline mr-1" />分析

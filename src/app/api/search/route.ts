@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const BACKEND = 'http://localhost:8000';
+import { BACKEND_BASE_URL } from '@/lib/backend';
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get('q') || '';
   try {
-    const res = await fetch(`${BACKEND}/api/search?q=${encodeURIComponent(q)}`);
+    const res = await fetch(`${BACKEND_BASE_URL}/api/search?q=${encodeURIComponent(q)}`);
     if (!res.ok) throw new Error(`Backend error: ${res.status}`);
     const data = await res.json();
     return NextResponse.json(data);

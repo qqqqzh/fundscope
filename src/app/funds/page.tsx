@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight, TrendingUp, Star, Search } from 'lucide-react';
 import { useWatchlist } from '@/lib/useWatchlist';
+import AddToSimulationButton from '@/components/investment/AddToSimulationButton';
 
 interface ApiFund {
   code: string; name: string; type: string; sectors: string[];
@@ -327,7 +328,20 @@ export default function FundsPage() {
                   <span className={`col-span-1 text-right text-[12px] font-semibold tabular-nums ${fund.yearChange >= 0 ? 'text-red-500' : 'text-green-500'}`}>
                     {fund.yearChange >= 0 ? '+' : ''}{fund.yearChange.toFixed(2)}%
                   </span>
-                  <span className="col-span-2 text-right text-[13px] text-gray-500 tabular-nums">{fund.accNav.toFixed(4)}</span>
+                  <span className="col-span-2 flex items-center justify-end gap-2 text-right text-[13px] text-gray-500 tabular-nums">
+                    <span>{fund.accNav.toFixed(4)}</span>
+                    <AddToSimulationButton
+                      compact
+                      fund={{
+                        code: fund.code,
+                        name: fund.name,
+                        type: fund.type,
+                        nav: fund.nav,
+                        navDate: fund.date,
+                        dailyChange: fund.dailyChange,
+                      }}
+                    />
+                  </span>
                 </Link>
               ))}
             </div>

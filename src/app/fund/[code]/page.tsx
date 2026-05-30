@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Star } from 'lucide-react';
 import { useWatchlist } from '@/lib/useWatchlist';
+import AddToSimulationButton from '@/components/investment/AddToSimulationButton';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -60,6 +61,7 @@ export default function FundDetailPage() {
   const latestNav = navHistory[navHistory.length - 1];
   const prevNav = navHistory.length > 1 ? navHistory[navHistory.length - 2] : latestNav;
   const dailyChange = prevNav.nav > 0 ? ((latestNav.nav - prevNav.nav) / prevNav.nav * 100) : 0;
+  const displayName = info['基金简称'] || info['基金名称'] || code;
 
   // Calculate performance from nav history
   const calcReturn = (days: number) => {
@@ -111,15 +113,28 @@ export default function FundDetailPage() {
       <div className="bg-gray-50 rounded-2xl p-6 border border-black/[0.04]">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => toggleFund(code)}
-              className={`p-2 rounded-lg transition-colors ${isWatched(code) ? 'text-amber-400 bg-amber-50' : 'text-gray-300 hover:text-amber-400 hover:bg-amber-50'}`}
-              title={isWatched(code) ? '取消自选' : '加入自选'}
-            >
-              <Star size={20} fill={isWatched(code) ? 'currentColor' : 'none'} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => toggleFund(code)}
+                className={`p-2 rounded-lg transition-colors ${isWatched(code) ? 'text-amber-400 bg-amber-50' : 'text-gray-300 hover:text-amber-400 hover:bg-amber-50'}`}
+                title={isWatched(code) ? '取消自选' : '加入自选'}
+              >
+                <Star size={20} fill={isWatched(code) ? 'currentColor' : 'none'} />
+              </button>
+              <AddToSimulationButton
+                compact
+                fund={{
+                  code,
+                  name: displayName,
+                  type: info['基金类型'] || '',
+                  nav: latestNav.nav,
+                  navDate: latestNav.date,
+                  dailyChange,
+                }}
+              />
+            </div>
             <div>
-              <h1 className="text-[22px] font-semibold tracking-tight">{info['基金简称'] || info['基金名称'] || code}</h1>
+              <h1 className="text-[22px] font-semibold tracking-tight">{displayName}</h1>
               <p className="text-[12px] text-gray-400 mt-1">{code} {info['基金类型'] ? `· ${info['基金类型']}` : ''} {info['基金经理'] ? `· ${info['基金经理']}` : ''}</p>
             </div>
           </div>

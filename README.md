@@ -1,5 +1,33 @@
 # FundScope
 
+## 快速启动
+
+从 GitHub 拉取后，优先按下面的方式跑起来：
+
+```bash
+git clone https://github.com/qqqqzh/fundscope.git
+cd fundscope
+```
+
+Windows：
+
+```powershell
+.\start-dev.cmd -OpenBrowser
+```
+
+macOS / Linux：
+
+```bash
+bash scripts/start-dev.sh --open
+```
+
+脚本会在首次运行时安装前端依赖、创建 `backend/.venv`、安装后端依赖，并同时启动：
+
+- 前端：<http://localhost:3000>
+- 后端：<http://localhost:8000>
+
+如果你想手动启动、部署到服务器，或配置远程后端，请看 [部署与运行教程](docs/DEPLOYMENT.md)。
+
 > 🌱 一个给投资小白用来建立分析基础、从真实 K 线学习的基金观察台。  
 > 💡 不负责让你一夜暴富，负责让你慢慢建立分析基础。
 
